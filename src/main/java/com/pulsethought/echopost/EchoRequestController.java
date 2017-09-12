@@ -8,16 +8,16 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.LinkedList;
 import java.util.List;
 
-@RestController
+@Controller
 public class EchoRequestController {
 
 
     private static List<String> logs = new LinkedList<>();
 
     @RequestMapping("/")
+    @ResponseBody
     public String welcome() {
-
-        StringBuilder sb = new StringBuilder("Logs<br/>");
+        StringBuilder sb = new StringBuilder("Logs<br/><form action=\"/reset\"><input type=\"submit\" value=\"Reset\"></form><br/>");
         for (int i = 0; i < logs.size(); i++) {
             sb.append(i).append(".<br/>").append(logs.get(i)).append("<br/><hr/>");
         }
@@ -28,10 +28,11 @@ public class EchoRequestController {
     @RequestMapping("/reset")
     public String reset() {
         logs.clear();
-        return "Logs cleared";
+        return "redirect:/";
     }
 
     @RequestMapping(value = "/listener", method = RequestMethod.POST)
+    @ResponseBody
     String recievePost(@RequestBody Object data) {
         String log = data.toString();
 
