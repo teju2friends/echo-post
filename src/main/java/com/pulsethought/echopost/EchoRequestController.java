@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class EchoRequestController {
@@ -31,8 +32,8 @@ public class EchoRequestController {
 
     @RequestMapping(value = "/listener", method = RequestMethod.POST)
     @ResponseBody
-    String recievePost(@RequestBody String data) {
-        logs.add(data);
+    String recievePost(@RequestHeader Map requestHeader, @RequestBody String data) {
+        logs.add(data + requestHeader.toString());
 
         return data;
     }
