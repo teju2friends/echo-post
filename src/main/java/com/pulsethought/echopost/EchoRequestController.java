@@ -31,11 +31,9 @@ public class EchoRequestController {
 
     @RequestMapping(value = "/listener", method = RequestMethod.POST)
     @ResponseBody
-    String recievePost(@RequestBody Object data) {
-        String log = data.toString();
+    String recievePost(@RequestBody String data) {
+        logs.add(data);
 
-        logs.add(log);
-
-        return log;
+        return data;
     }
 }
