@@ -1,11 +1,15 @@
 package com.pulsethought.echopost;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 public class EchoRequestController {
@@ -32,9 +36,29 @@ public class EchoRequestController {
 
     @RequestMapping(value = "/listener", method = RequestMethod.POST)
     @ResponseBody
-    String recievePost(@RequestHeader Map requestHeader, @RequestBody String data) {
-        logs.add(data + requestHeader.toString());
+    String recievePost(HttpServletRequest request) throws Exception {
+        StringBuilder sb = new StringBuilder();
 
-        return data;
+        sb.append("Headers:").append("\r\n");
+
+        Enumeration<String> headerNames = request.getHeaderNames();
+
+        String header;
+        while ((header = headerNames.nextElement()) != null)
+            sb
+                    .append(header)
+                    .append(":")
+                    .append(request.getHeader(header))
+                    .append("\r\n");
+
+
+        BufferedReader reader = request.getReader();
+        String line;
+        while ((line = reader.readLine()) != null)
+            sb.append(new String(line.getBytes(), "UTF-8"));
+
+        logs.add(sb.toString());
+
+        return sb.toString();
     }
 }
