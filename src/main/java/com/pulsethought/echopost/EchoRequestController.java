@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,6 +53,7 @@ public class EchoRequestController {
                     .append(request.getHeader(header))
                     .append("\r\n");
 
+        sb.append("\r\n<br\\>");
         try {
             BufferedReader reader = request.getReader();
             String line;
@@ -58,6 +61,28 @@ public class EchoRequestController {
                 sb.append(new String(line.getBytes(), "UTF-8"));
         } catch (Exception e) {
             sb.append("Error reading body");
+        }
+
+        sb.append("\r\n<br\\>");
+        sb.append("Parts:<br\\>");
+        for (Part part : request.getParts()) {
+            for (String headerName : part.getHeaderNames()) {
+                sb
+                        .append(headerName)
+                        .append(":")
+                        .append(part.getHeader(headerName))
+                        .append("\n<br\\>");
+            }
+            sb.append("ContentType :").append(part.getContentType());
+            sb.append("Size :").append(part.getSize());
+            InputStream is = part.getInputStream();
+
+            java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+            String content = s.hasNext() ? s.next() : "";
+
+            sb.append(content);
+            sb.append("\r\n<br\\>");
+
         }
 
         logs.add(sb.toString());
