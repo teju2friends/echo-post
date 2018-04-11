@@ -51,11 +51,14 @@ public class EchoRequestController {
                     .append(request.getHeader(header))
                     .append("\r\n");
 
-
-        BufferedReader reader = request.getReader();
-        String line;
-        while ((line = reader.readLine()) != null)
-            sb.append(new String(line.getBytes(), "UTF-8"));
+        try {
+            BufferedReader reader = request.getReader();
+            String line;
+            while ((line = reader.readLine()) != null)
+                sb.append(new String(line.getBytes(), "UTF-8"));
+        } catch (Exception e) {
+            sb.append("Error reading body");
+        }
 
         logs.add(sb.toString());
 
